@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Register</title>
+</head>
+<body>
+    <h2>Register</h2>
+   
+
+    <form method="post" action="/register">
+        Name: <input type="text" name="name" required><br>
+        Email: <input type="email" name="email" required><br>
+        Password: <input type="password" name="password" required><br>
+        Role:
+        <select name="role" id="role" required onchange="toggleDoctorFields()">
+            <option value="Patient">Patient</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Receptionist">Receptionist</option>
+            <option value="Lab">Lab</option>
+            <option value="Finance">Finance</option>
+            <option value="Inventory">Inventory</option>
+        </select>
+
+        <div id="doctorFields" style="display: none;">
+            <label for="specialization">Specialization:</label>
+            <select name="specialization">
+                <option value="Cardiologist">Cardiologist</option>
+                <option value="Neurologist">Neurologist</option>
+                <option value="Dermatologist">Dermatologist</option>
+                <option value="Pediatrician">Pediatrician</option>
+                <option value="General Physician">General Physician</option>
+            </select>
+    
+            <label for="contact">Contact:</label>
+            <input type="text" name="contact">
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="/login">Login here</a></p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+{% for category, message in messages %}
+    <p class="{{ category }}">{{ message }}</p>
+{% endfor %}
+{% endwith %}
+    <script>
+        function toggleDoctorFields() {
+            var role = document.getElementById("role").value;
+            var doctorFields = document.getElementById("doctorFields");
+            if (role === "Doctor") {
+                doctorFields.style.display = "block";
+            } else {
+                doctorFields.style.display = "none";
+            }
+        }
+        </script>
+
+
+</body>
+</html>
+

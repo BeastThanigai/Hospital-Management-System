@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Doctor Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Welcome, Dr. {{ doctor.name }}</h1>
+
+    <h2>Your Appointments</h2>
+    {% if appointments %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    {% set show_actions = false %}
+                    {% for app in appointments %}
+                        {% if app.status == 'Scheduled' %}
+                            {% set show_actions = true %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if show_actions %}
+                        <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in appointments %}
+                <tr>
+                    <td>{{ app.patient_name }}</td>
+                    <td>{{ app.date }}</td>
+                    <td>{{ app.time }}</td>
+                    
+                    <td>
+                        {% if app.status == 'Scheduled' %}
+                            <form method="post" action="{{ url_for('update_appointment_status', appointment_id=app.id) }}">
+                                <select name="status">
+                                    <option value="Completed">Completed</option>
+                                </select>
+                                <button type="submit">Update</button>
+                            </form>
+                        {% else %}
+                            {{ app.status }}
+                        {% endif %}
+                    </td>
+                    
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No appointments available.</p>
+    {% endif %}
+
+    
+<h2>Your Completed Appointments</h2>
+{% if completed_appointments %}
+    <table>
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in completed_appointments %}
+            <tr>
+                <td>{{ app.patient_name }}</td>
+                <td>{{ app.date }}</td>
+                <td>{{ app.time }}</td>
+                <td>{{ app.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No completed appointments.</p>
+{% endif %}
+
+    <h2>Add Medical Record</h2>
+    <form action="/doctor/add_record" method="post">
+
+        <label for="patient_id">Select Patient:</label>
+        <select name="patient_id" required>
+            {% for patient in patients %}
+                <option value="{{ patient.id }}">{{ patient.name }}</option>
+            {% endfor %}
+        </select>        
+
+        <label for="diagnosis">Diagnosis:</label>
+        <input type="text" name="diagnosis" required>
+
+        <label for="prescription">Prescription:</label>
+        <textarea name="prescription" required></textarea>
+
+        <button type="submit">Add Record</button>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                {% if category == 'success' and 'Medical record' in message %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<h2>Your Medical Records</h2>
+{% if medical_records %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Diagnosis</th>
+                <th>Prescription</th>
+                <th>Date Added</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in medical_records %}
+            <tr>
+                <td>{{ record.patient_name }}</td>
+                <td>{{ record.diagnosis }}</td>
+                <td>{{ record.prescription }}</td>
+                <td>{{ record.date_added }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No medical records added yet.</p>
+{% endif %}
+
+<form action="/doctor/request_test" method="post">
+    <label for="patient_id">Select Patient:</label>
+    <select name="patient_id" required>
+        {% for patient in patients %}
+            <option value="{{ patient.id }}">{{ patient.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="test_name">Test Name:</label>
+    <input type="text" name="test_name" required>
+
+    <button type="submit">Request Lab Test</button>
+</form>
+
+
+    <a href="/logout">Logout</a>
+</body>
+</html>

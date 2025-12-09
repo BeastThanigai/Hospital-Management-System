@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lab Technician Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Welcome, Lab Technician</h1>
+    <h2>Pending Test Requests</h2>
+    {% if test_requests %}
+        <ul>
+            {% for request in test_requests %}
+                <li>
+                    Test: {{ request.test_name }} | Status: {{ request.status }}
+                    {% if request.status == 'Pending' %}
+                        <form action="/lab/upload_report" method="post" enctype="multipart/form-data" style="display:inline;">
+                            <input type="hidden" name="test_id" value="{{ request.test_id }}">
+                            <input type="file" name="report_file" accept=".pdf,.jpg,.jpeg,.png" required>
+                            <button type="submit">Upload Report</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No pending test requests.</p>
+    {% endif %}
+    
+    <h2>Completed Reports</h2>
+    {% if completed_reports %}
+        <ul>
+            {% for report in completed_reports %}
+                <li>
+                    Patient: {{ report.patient_name }} | Test: {{ report.test_name }} |
+                    Report: <a href="/{{ report.report_url }}" target="_blank">View Report</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No completed reports available.</p>
+    {% endif %}
+    
+    <hr>
+    <a href="/logout">Logout</a>
+</body>
+</html>

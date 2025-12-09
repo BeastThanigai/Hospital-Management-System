@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+        form.inline {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome, Inventory Manager</h1>
+    <a href="/logout">Logout</a>
+    <hr>
+
+    <h2>Current Inventory</h2>
+    {% if medicines %}
+    <table>
+        <thead>
+            <tr>
+                <th>Medicine Name</th>
+                <th>Stock</th>
+                <th>Expiry Date</th>
+                <th>Supplier Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for med in medicines %}
+            <tr>
+                <td>{{ med.medicine_name }}</td>
+                <td>{{ med.stock }}</td>
+                <td>{{ med.expiry_date }}</td>
+                <td>{{ med.supplier_name }}</td>
+                <td>
+                    <!-- Increase Stock -->
+                    <form class="inline" action="/inventory/adjust_stock" method="post">
+                        <input type="hidden" name="medicine_id" value="{{ med.id }}">
+                        <input type="hidden" name="action" value="increase">
+                        <button type="submit">+</button>
+                    </form>
+
+                    <!-- Decrease Stock -->
+                    <form class="inline" action="/inventory/adjust_stock" method="post">
+                        <input type="hidden" name="medicine_id" value="{{ med.id }}">
+                        <input type="hidden" name="action" value="decrease">
+                        <button type="submit">-</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No medicines available.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Add or Update Medicine</h2>
+    <form action="/inventory/manage_medicine" method="post">
+        <label>Medicine Name:</label>
+        <input type="text" name="medicine_name" required>
+
+        <label>Stock:</label>
+        <input type="number" name="stock" required>
+
+        <label>Expiry Date:</label>
+        <input type="date" name="expiry_date" required>
+
+        <label>Supplier Name:</label>
+        <input type="text" name="supplier_name" required>
+
+        <label>Supplier Contact:</label>
+        <input type="text" name="supplier_contact" required>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <hr>
+
+    <h2>Stock Alerts</h2>
+    {% if low_stock_alerts %}
+        <ul>
+        {% for alert in low_stock_alerts %}
+            <li>{{ alert.medicine_name }} - Stock: {{ alert.stock }} (Low!)</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No stock alerts.</p>
+    {% endif %}
+</body>
+</html>

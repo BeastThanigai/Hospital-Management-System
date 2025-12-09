@@ -1,0 +1,150 @@
+<!--<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Welcome, {{ patient.name }}</h1>
+
+    <h2>Your Admission Info</h2>
+    <p>Age: {{ patient.age }}</p>
+    <p>Gender: {{ patient.gender }}</p>
+    <p>Contact: {{ patient.contact }}</p>
+    <p>Address: {{ patient.address }}</p>
+    <p>Medical History: {{ patient.medical_history }}</p>
+
+    <hr>
+
+    <h2>Your Appointments</h2>
+    {% if appointments %}
+        <ul>
+            {% for app in appointments %}
+                <li>{{ app.date }} - {{ app.time }} with Dr. {{ app.doctor_name }} (Status: {{ app.status }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No appointments scheduled.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Your Medical Records</h2>
+    {% if medical_records %}
+        <ul>
+            {% for record in medical_records %}
+                <li>Diagnosis: {{ record.diagnosis }} | Prescription: {{ record.prescription }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No medical records available.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Your Bills</h2>
+    {% if bills %}
+        <ul>
+            {% for bill in bills %}
+                <li>Amount: ${{ bill.amount }} | Status: {{ bill.payment_status }} | Payment Date: {{ bill.payment_date or 'N/A' }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No bills available.</p>
+    {% endif %}
+
+    <hr>
+    <a href="/logout">Logout</a>
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Welcome, {{ patient.name }}</h1>
+
+    <h2>Your Admission Info</h2>
+    <p>Age: {{ patient.age }}</p>
+    <p>Gender: {{ patient.gender }}</p>
+    <p>Contact: {{ patient.contact }}</p>
+    <p>Address: {{ patient.address }}</p>
+    <p>Medical History: {{ patient.medical_history }}</p>
+
+    <hr>
+
+    <h2>Book an Appointment</h2>
+    <form action="/patient/book_appointment" method="post">
+        <label for="doctor_id">Select Doctor:</label>
+        <select id="doctor_id" name="doctor_id" required>
+            {% for doctor in doctors %}
+                <option value="{{ doctor.id }}">Dr. {{ doctor.name }} - {{ doctor.specialization }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        <br>
+        <label for="time">Time:</label>
+        <input type="time" id="time" name="time" required>
+        <br>
+        <button type="submit">Book Appointment</button>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                {% if category == 'success' and 'Appointment booked' in message %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+    <hr>
+
+    <h2>Your Appointments</h2>
+    {% if appointments %}
+        <ul>
+            {% for app in appointments %}
+                <li>{{ app.date }} - {{ app.time }} with Dr. {{ app.doctor_name }} (Status: {{ app.status }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No appointments scheduled.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Your Medical Records</h2>
+    {% if medical_records %}
+        <ul>
+            {% for record in medical_records %}
+                <li>Diagnosis: {{ record.diagnosis }} | Prescription: {{ record.prescription }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No medical records available.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Your Bills</h2>
+    {% if bills %}
+        <ul>
+            {% for bill in bills %}
+                <li>Amount: ${{ bill.amount }} | Status: {{ bill.payment_status }} | Payment Date: {{ bill.payment_date or 'N/A' }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No bills available.</p>
+    {% endif %}
+
+    <hr>
+    <a href="/logout">Logout</a>
+</body>
+</html>
+

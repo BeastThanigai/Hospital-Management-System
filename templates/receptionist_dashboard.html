@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receptionist Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>Welcome, Receptionist</h1>
+
+    <h2>Add Patient</h2>
+    <form method="post" action="/receptionist/add_patient">
+        <label>Name:</label><input type="text" name="name" required><br>
+        <label>Age:</label><input type="number" name="age" required><br>
+        <label>Gender:</label>
+        <select name="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select><br>
+        <label>Contact:</label><input type="text" name="contact" required><br>
+        <label>Address:</label><input type="text" name="address" required><br>
+        <label>Medical History:</label><textarea name="medical_history"></textarea><br>
+        <button type="submit">Add Patient</button>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                {% if category == 'success' and 'Patient added' in message %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+    <hr>
+    <hr>
+
+    <h2>Appointments Waiting for Scheduling</h2>
+    {% if waiting_appointments %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Doctor Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in waiting_appointments %}
+                <tr>
+                    <td>{{ app.patient_name }}</td>
+                    <td>Dr. {{ app.doctor_name }}</td>
+                    <td>{{ app.date }}</td>
+                    <td>{{ app.time }}</td>
+                    <td>
+                        <!-- Schedule Button -->
+                        <form method="post" action="/receptionist/schedule_appointment" style="display:inline;">
+                            <input type="hidden" name="appointment_id" value="{{ app.id }}">
+                            <button type="submit">Schedule</button>
+                        </form>
+                        
+                        <!-- Cancel Button -->
+                        <form method="post" action="/receptionist/cancel_appointment" style="display:inline;">
+                            <input type="hidden" name="appointment_id" value="{{ app.id }}">
+                            <button type="submit">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No waiting appointments.</p>
+    {% endif %}
+
+    <hr>
+    <h2>Scheduled Appointments</h2>
+    {% if scheduled_appointments %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Doctor Name</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in scheduled_appointments %}
+                <tr>
+                    <td>{{ app.patient_name }}</td>
+                    <td>Dr. {{ app.doctor_name }}</td>
+                    <td>{{ app.date }}</td>
+                    <td>{{ app.time }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No scheduled appointments.</p>
+    {% endif %}
+    <hr>
+    <a href="/logout">Logout</a>
+</body>
+</html>
